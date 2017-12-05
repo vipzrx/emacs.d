@@ -170,7 +170,7 @@ If you use hunspell, check [[http://blog.binchen.org/posts/what-s-the-best-spell
 **** sdcv (console version of StarDict)
 - Required by sdcv.el
 - Install through OS package manager
-- Run =curl http://abloz.com/huzheng/stardict-dic/dict.org/stardict-dictd_www.dict.org_wn-2.4.2.tar.bz2 | tar jx -C ~/.stardict/dic= to install dictionary
+- Download dictionaries () ~/.stardict/dic= to install dictionary
 **** [[https://github.com/BurntSushi/ripgrep][ripgrep]]
 - Used by =M-x counsel-etags-grep= to search text in files
 - Run =curl https://sh.rustup.rs -sSf | sh= in shell to install [[https://www.rust-lang.org/][Rust]] then =cargo install ripgrep=

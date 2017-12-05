@@ -346,6 +346,16 @@ And show information use tooltip."
   (ignore-errors
     (call-interactively 'previous-line arg)))
 
+(defun sdcv-clean-html ()
+  "Clean html content in current buffer."
+  (unless (featurep 'shr) (require 'shr))
+  (when (fboundp 'shr-insert-document)
+    (let* ((dom (with-current-buffer (current-buffer)
+                  (libxml-parse-html-region (point-min) (point-max)))))
+      (erase-buffer)
+      (shr-insert-document dom)
+      (goto-char (point-min)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Utilities Functions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defun sdcv-search-detail (&optional word)
   "Search WORD through the `command-line' tool sdcv.
@@ -357,7 +367,8 @@ The result will be displayed in buffer named with
     (erase-buffer)
     (insert (sdcv-search-witch-dictionary
              word
-             sdcv-dictionary-complete-list)))
+             sdcv-dictionary-complete-list))
+    (sdcv-clean-html))
   (unless (eq (current-buffer) (sdcv-get-buffer))
     (sdcv-goto-sdcv))
   (sdcv-mode-reinit))
@@ -376,12 +387,17 @@ Argument DICTIONARY-LIST the word that need transform."
   (setq sdcv-current-translate-object word)
 
   ;; Return translate result.
-  (let (cmd)
+  (let* (cmd str)
     (sdcv-filter
      (mapconcat
       (lambda (dict)
         (setq cmd (format "sdcv -n -u \"%s\" \"%s\"" dict word))
-        (shell-command-to-string cmd))
+        (setq str (shell-command-to-string cmd))
+        (with-temp-buffer
+          (insert str)
+          (sdcv-clean-html)
+          (setq str (buffer-substring (point-min) (point-max))))
+        str)
       dictionary-list "\n")
      )))
 
